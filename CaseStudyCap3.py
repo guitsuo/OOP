@@ -43,28 +43,17 @@ class Apartamento(Propriedade):
 
     def prompt_init():
         parent_init = Propriedade.prompt_init()
-        lavanderia = ''
+        lavanderia = obter_input_valido('''
+        Que facilidas de lavanderia a propriedade tem?
+        ''',
+        Apartamento.lavanderias_validas
+        )
 
-        while lavanderia.lower() not in Apartamento.lavanderias_validas:
-            lavanderia = input("Que facilidades a lavanderia possui? "
-                                "({})".format(
-                                ", ".join(Apartamento.lavanderias_validas)  
-                                )
-            )
-
-        sacada = ''
-        while sacada.lower() not in Apartamento.sacadas_validas:
-            sacada = input("Que propriedade a sacada tem?"
-                           "({})".format(
-                           ", ".join(Apartamento.sacadas_validas) 
-                           ) 
-            )
-
-        parent_init.update({
-            "lavanderia": lavanderia,
-            "sacada": sacada
-        })
-
+        sacada = obter_input_valido('''
+        O Apartamento possui sacada?
+        ''', 
+        Apartamento.sacadas_validas
+        )
         return parent_init
     prompt_init = staticmethod(prompt_init)
 
