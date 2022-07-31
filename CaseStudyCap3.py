@@ -82,11 +82,65 @@ class Casa(Propriedade):
         print(f"n_historias: {self.lavanderia}")
         print(f"sacadas: {self.sacada}")
 
+    @staticmethod
     def prompt_init():
         parent_init = Propriedade.prompt_init()
         cerca = obter_input_valido("O jardim tem cerca?", Casa.cercas_validas)
         garagem = obter_input_valido("Há uma garagem?", Casa.garagens_validas)
 
-t = Apartamento("sim", "privativa").display()
-print(t)
+        numero_historias = input("Quantas historias? ")
 
+        parent_init.update({
+            "cerca": cerca,
+            "garagem": garagem,
+            "numero_historias": numero_historias
+        })
+        return parent_init
+
+
+class Compra:
+    # Por que estamos colocando super().__init__ ?
+    # R: Porque vão ser combinadas com outras classes e não sabemos em que ordem as chamadas "super" vão ser feitas
+    def __init__(self, preco = '', taxas = '', **kwargs):
+        super().__init__(**kwargs)
+        self.preco = preco
+        self.taxas = taxas
+
+    def display(self):
+        super().display()
+        print("----- Detalhes da compra  ------")
+        print(f"Preço de venda: {self.preco}")
+        print(f"Taxas estimadas: {self.taxas}")
+
+    @staticmethod
+    def prompt_init():
+        return dict(
+            preco = input("Qual o preço de venda?")
+            taxas = input("Qual as taxas estimadas?")
+        )
+
+class Aluguel:
+    def __init__(self, mobiliada = '', utilidades = '', aluguel = '', **kwargs):
+        super().__init__(**kwargs)
+        self.mobiliada = mobiliada
+        self.aluguel = aluguel
+        self.utilidades = utilidades
+
+    def display(self):
+        super().display()
+        print("Detalhes de aluguel")
+        print(f"Aluguel: {self.aluguel}")
+        print(f"Utilidades estimadas: {self.utilidades}")
+        print(f"mobiliada: {self.mobiliada}")
+
+    @staticmethod
+    def prompt_init():
+        return dict(
+            aluguel = input("Qual o aluguel mensal?")
+            utilidades = input(
+                "Quais são as utildiades estimadas"
+            ),
+            mobiliada = obter_input_valido(
+                "A propriedade é mobiliada?", ("sim", "nao")
+            )
+        )
