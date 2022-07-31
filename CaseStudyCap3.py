@@ -66,13 +66,26 @@ def obter_input_valido(string_entrada, opcoes_validas):
         resposta = input(string_entrada)
     return resposta
 
-#class Casa(Propriedade):
-#    def __init__(self, metros_quadrados, n_camas, n_banheiros, n_historias, garagem, cerca):
-#        super().__init__(metros_quadrados, n_camas, n_banheiros)
-#        self.n_historias = n_historias
-#        self.garagem = garagem
-#        self.cerca = cerca 
+class Casa(Propriedade):
+    garagens_validas = ("anexada", "desanexada","nulo")
+    cercas_validas = ("sim","nao")
 
+    def __init__(self,  n_historias, garagem, cerca, **kwargs):
+        super().__init__(**kwargs)
+        self.n_historias = n_historias
+        self.garagem = garagem
+        self.cerca = cerca 
+
+    def display(self):
+        super().display()
+        print("----- Detalhes da casa  ------")
+        print(f"n_historias: {self.lavanderia}")
+        print(f"sacadas: {self.sacada}")
+
+    def prompt_init():
+        parent_init = Propriedade.prompt_init()
+        cerca = obter_input_valido("O jardim tem cerca?", Casa.cercas_validas)
+        garagem = obter_input_valido("Há uma garagem?", Casa.garagens_validas)
 
 t = Apartamento("sim", "privativa").display()
 print(t)
