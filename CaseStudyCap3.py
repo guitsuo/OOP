@@ -2,11 +2,11 @@
 
 class Propriedade:
     # Estamos adicionando "Kwargs" porque sabemos que será utilizado em uma situaçã ode múltipla herança 
-    def __init__(self, metros_quadrados, n_camas, n_banheiros, **kwargs):
+    def __init__(self, metros_quadrados, camas, banheiros, **kwargs):
         super().__init__(**kwargs)
         self.metros_quadrados = metros_quadrados
-        self.n_camas = n_camas
-        self.n_banheiros = n_banheiros 
+        self.n_camas = camas
+        self.n_banheiros = banheiros 
 
     def display(self):
         '''
@@ -20,7 +20,7 @@ class Propriedade:
     def prompt_init():
         return dict(metros_quadrados = input("Adicione os metros quadrados: "),
                     camas = input("Adicione o numero de camas"),
-                    banhos = input("Adicione o numero de banheiros")
+                    banheiros = input("Adicione o numero de banheiros")
         )
     #prompt_init = staticmethod(prompt_init)
 
@@ -79,8 +79,10 @@ class Casa(Propriedade):
     def display(self):
         super().display()
         print("----- Detalhes da casa  ------")
-        print(f"n_historias: {self.lavanderia}")
-        print(f"sacadas: {self.sacada}")
+
+        print(f"n_historias: {self.n_historias}")
+        print(f"garagem: {self.garagem}")
+        print(f"cerca: {self.cerca}")
 
     @staticmethod
     def prompt_init():
@@ -88,12 +90,12 @@ class Casa(Propriedade):
         cerca = obter_input_valido("O jardim tem cerca?", Casa.cercas_validas)
         garagem = obter_input_valido("Há uma garagem?", Casa.garagens_validas)
 
-        numero_historias = input("Quantas historias? ")
+        n_historias = input("Quantas historias? ")
 
         parent_init.update({
             "cerca": cerca,
             "garagem": garagem,
-            "numero_historias": numero_historias
+            "n_historias": n_historias
         })
         return parent_init
 
@@ -115,7 +117,7 @@ class Compra:
     @staticmethod
     def prompt_init():
         return dict(
-            preco = input("Qual o preço de venda?")
+            preco = input("Qual o preço de venda?"),
             taxas = input("Qual as taxas estimadas?")
         )
 
@@ -136,7 +138,7 @@ class Aluguel:
     @staticmethod
     def prompt_init():
         return dict(
-            aluguel = input("Qual o aluguel mensal?")
+            aluguel = input("Qual o aluguel mensal?"),
             utilidades = input(
                 "Quais são as utildiades estimadas"
             ),
@@ -144,3 +146,66 @@ class Aluguel:
                 "A propriedade é mobiliada?", ("sim", "nao")
             )
         )
+
+class CasaAluguel(Aluguel, Casa):
+    @staticmethod 
+    def prompt_init():
+        init = Casa.prompt_init()
+        init.update(Aluguel.prompt_init())
+        return init 
+
+class ApartamentoAluguel(Aluguel, Apartamento):
+    @staticmethod
+    def prompt_init():
+        init = Apartamento.prompt_init()
+        init.update(Aluguel.prompt_init())
+        return init 
+
+class ApartamentoCompra(Compra, Apartamento):
+    @staticmethod
+    def prompt_init():
+        init = Apartamento.prompt_init()
+        init.update(Compra.prompt_init())
+        return init
+
+class CasaCompra(Compra, Casa):
+    @staticmethod
+    def prompt_init():
+        init = Compra.prompt_init()
+        init.update(Compra.prompt_init())
+        return init
+
+class Agente:
+    def __init__(self):
+        self.lista_propriedade = []
+
+    
+    def display_propriedades(self):
+        for propriedade in self.lista_propriedade:
+            propriedade.display()
+
+    tipo_mapa = {
+        ("casa", "aluguel"): CasaAluguel,
+        ("casa", "compra"): CasaCompra,
+        ("apartamento", "aluguel"): ApartamentoAluguel,
+        ("apartamento", "compra"): ApartamentoCompra
+    }
+
+    def adiciona_propriedade(self):
+        tipo_propriedade = obter_input_valido(
+            "Que tipo de propriedade",
+            ("casa", "apartamento")).lower()
+        tipo_pagamento = obter_input_valido(
+            "Que tipo de pagamento?",
+            ("compra", "aluguel")).lower()
+        
+        ClassePropriedade = self.tipo_mapa[(tipo_propriedade, tipo_pagamento)]
+        init_args = ClassePropriedade.prompt_init()
+        self.lista_propriedade.append(ClassePropriedade(**init_args))
+
+        
+
+init = CasaAluguel.prompt_init()
+
+casa = CasaAluguel(**init)
+casa.display()
